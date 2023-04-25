@@ -41,120 +41,153 @@ def get_opensearch(the_host="localhost"):
 
 # Hardcoded query here.  Better to use search templates or other query config.
 def create_query(user_query, filters=None, sort="_score", sortDir="desc", size=10, source=None):
+    # query_obj = {
+    #     'size': size,
+    #     "sort": [
+    #         {sort: {"order": sortDir}}
+    #     ],
+    #     "query": {
+    #         "function_score": {
+    #             "query": {
+    #                 "bool": {
+    #                     "must": [
+
+    #                     ],
+    #                     "should": [  #
+    #                         {
+    #                             "match": {
+    #                                 "name": {
+    #                                     "query": user_query,
+    #                                     "fuzziness": "1",
+    #                                     "prefix_length": 2,
+    #                                     # short words are often acronyms or usually not misspelled, so don't edit
+    #                                     "boost": 0.01
+    #                                 }
+    #                             }
+    #                         },
+    #                         {
+    #                             "match_phrase": {  # near exact phrase match
+    #                                 "name.hyphens": {
+    #                                     "query": user_query,
+    #                                     "slop": 1,
+    #                                     "boost": 50
+    #                                 }
+    #                             }
+    #                         },
+    #                         {
+    #                             "multi_match": {
+    #                                 "query": user_query,
+    #                                 "type": "phrase",
+    #                                 "slop": "6",
+    #                                 "minimum_should_match": "2<75%",
+    #                                 "fields": ["name^10", "name.hyphens^10", "shortDescription^5",
+    #                                            "longDescription^5", "department^0.5", "sku", "manufacturer", "features",
+    #                                            "categoryPath"]
+    #                             }
+    #                         },
+    #                         {
+    #                             "terms": {
+    #                                 # Lots of SKUs in the query logs, boost by it, split on whitespace so we get a list
+    #                                 "sku": user_query.split(),
+    #                                 "boost": 50.0
+    #                             }
+    #                         },
+    #                         {  # lots of products have hyphens in them or other weird casing things like iPad
+    #                             "match": {
+    #                                 "name.hyphens": {
+    #                                     "query": user_query,
+    #                                     "operator": "OR",
+    #                                     "minimum_should_match": "2<75%"
+    #                                 }
+    #                             }
+    #                         }
+    #                     ],
+    #                     "minimum_should_match": 1,
+    #                     "filter": filters  #
+    #                 }
+    #             },
+    #             "boost_mode": "multiply",  # how _score and functions are combined
+    #             "score_mode": "sum",  # how functions are combined
+    #             "functions": [
+    #                 {
+    #                     "filter": {
+    #                         "exists": {
+    #                             "field": "salesRankShortTerm"
+    #                         }
+    #                     },
+    #                     "gauss": {
+    #                         "salesRankShortTerm": {
+    #                             "origin": "1.0",
+    #                             "scale": "100"
+    #                         }
+    #                     }
+    #                 },
+    #                 {
+    #                     "filter": {
+    #                         "exists": {
+    #                             "field": "salesRankMediumTerm"
+    #                         }
+    #                     },
+    #                     "gauss": {
+    #                         "salesRankMediumTerm": {
+    #                             "origin": "1.0",
+    #                             "scale": "1000"
+    #                         }
+    #                     }
+    #                 },
+    #                 {
+    #                     "filter": {
+    #                         "exists": {
+    #                             "field": "salesRankLongTerm"
+    #                         }
+    #                     },
+    #                     "gauss": {
+    #                         "salesRankLongTerm": {
+    #                             "origin": "1.0",
+    #                             "scale": "1000"
+    #                         }
+    #                     }
+    #                 },
+    #                 {
+    #                     "script_score": {
+    #                         "script": "0.0001"
+    #                     }
+    #                 }
+    #             ]
+
+    #         }
+    #     }
+    # }
+
     query_obj = {
-        'size': size,
-        "sort": [
-            {sort: {"order": sortDir}}
-        ],
+        "size": size,
         "query": {
-            "function_score": {
-                "query": {
-                    "bool": {
-                        "must": [
-
-                        ],
-                        "should": [  #
-                            {
-                                "match": {
-                                    "name": {
-                                        "query": user_query,
-                                        "fuzziness": "1",
-                                        "prefix_length": 2,
-                                        # short words are often acronyms or usually not misspelled, so don't edit
-                                        "boost": 0.01
-                                    }
-                                }
-                            },
-                            {
-                                "match_phrase": {  # near exact phrase match
-                                    "name.hyphens": {
-                                        "query": user_query,
-                                        "slop": 1,
-                                        "boost": 50
-                                    }
-                                }
-                            },
-                            {
-                                "multi_match": {
-                                    "query": user_query,
-                                    "type": "phrase",
-                                    "slop": "6",
-                                    "minimum_should_match": "2<75%",
-                                    "fields": ["name^10", "name.hyphens^10", "shortDescription^5",
-                                               "longDescription^5", "department^0.5", "sku", "manufacturer", "features",
-                                               "categoryPath"]
-                                }
-                            },
-                            {
-                                "terms": {
-                                    # Lots of SKUs in the query logs, boost by it, split on whitespace so we get a list
-                                    "sku": user_query.split(),
-                                    "boost": 50.0
-                                }
-                            },
-                            {  # lots of products have hyphens in them or other weird casing things like iPad
-                                "match": {
-                                    "name.hyphens": {
-                                        "query": user_query,
-                                        "operator": "OR",
-                                        "minimum_should_match": "2<75%"
-                                    }
-                                }
-                            }
-                        ],
-                        "minimum_should_match": 1,
-                        "filter": filters  #
+            "bool": {
+            "should": [
+                {
+                "match": {
+                    "name": {
+                    "query": "ipad",
+                    "prefix_length": 2,
+                    "boost": 0.01
                     }
+                }
                 },
-                "boost_mode": "multiply",  # how _score and functions are combined
-                "score_mode": "sum",  # how functions are combined
-                "functions": [
-                    {
-                        "filter": {
-                            "exists": {
-                                "field": "salesRankShortTerm"
-                            }
-                        },
-                        "gauss": {
-                            "salesRankShortTerm": {
-                                "origin": "1.0",
-                                "scale": "100"
-                            }
-                        }
-                    },
-                    {
-                        "filter": {
-                            "exists": {
-                                "field": "salesRankMediumTerm"
-                            }
-                        },
-                        "gauss": {
-                            "salesRankMediumTerm": {
-                                "origin": "1.0",
-                                "scale": "1000"
-                            }
-                        }
-                    },
-                    {
-                        "filter": {
-                            "exists": {
-                                "field": "salesRankLongTerm"
-                            }
-                        },
-                        "gauss": {
-                            "salesRankLongTerm": {
-                                "origin": "1.0",
-                                "scale": "1000"
-                            }
-                        }
-                    },
-                    {
-                        "script_score": {
-                            "script": "0.0001"
-                        }
-                    }
-                ]
-
+                {
+                "multi_match": {
+                    "query": "ipad",
+                    "type": "phrase",
+                    "slop": "6",
+                    "minimum_should_match": "2<75%",
+                    "fields": [
+                    "name^10",
+                    "shortDescription^5"
+                    ]
+                }
+                }
+            ],
+            "minimum_should_match": 1,
+            "filter": []
             }
         }
     }
