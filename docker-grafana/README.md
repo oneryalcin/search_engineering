@@ -1,3 +1,29 @@
+> # Note: For weekly submissions please check the relevant md files
+# Week 2: `week-2-responses.md`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////
+
+///////////
+
+////////
+//
+
+
 # Metrics stack for observing OpenSearch
 
 Observing metrics, both about OpenSearch internals and host resource usage, can help you gain intuition for how OpenSearch works.  Here we provision a metrics system (Prometheus) to gather and store time-series metrics, Grafana to visualize them, and a pre-built dashboard for OpenSearch.
