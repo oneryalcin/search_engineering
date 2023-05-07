@@ -1,3 +1,29 @@
+> # Note: For weekly submissions please check the relevant md files
+# Week 2: `week-2-responses.md`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////
+
+///////////
+
+///////////
+
+
+
 # Welcome to Search Engineering
 
 Search Engineering is a four week class taught by [Grant Ingersoll](https://www.linkedin.com/in/grantingersoll/) and [Dave Anderson](https://www.linkedin.com/in/daveandersonncsu/) and is focused on helping students
